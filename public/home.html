@@ -1,7 +1,48 @@
 <!DOCTYPE html>
 <html>
-    <head>Home Page</head>
+  <head>   
+    <meta charset="UTF-8" />
+    <meta name="viewpart" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/flexbox.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <title> Home Page </title>
+  </head>
     <body>
-        <h1> Welcome Home</h1>
+      <div class="main">
+        <header>
+            <nav>
+        <ul>
+            <li> <a href="./home.html">Home</a></li>
+            <li> <a href="#">About Us</a></li>
+            <li> <a id="logout" href="" onclick="doLogout(event)">Logout</a></li>
+            
+        </ul>
+        </nav>
+        </header>
+        </div>
+        <div class="content">
+            <div id="reservation">
+              <div>Loading...</div>
+            </div>
+          </div>
+          <footer>
+            <nav>
+                <ul>
+                    <li> <a href="./home.html">Home</a></li>
+                    <li> <a href="#">About Us</a></li>
+                    <li> <a id="logout" href="" onclick="doLogout(event)">Logout</a></li>
+                </ul>
+                </nav>
+            
+        </footer>
+
+        <script src="./src/api.config.js"></script>
+        <script src="./src/simple-storage.js"></script>
+        <script src="./src/service-helpers.js"></script>
+        <script src="./src/auth.service.js"></script>
+        <script src="./src/reservation.service.js"></script>
+        <script src="./src/route-guard.js"></script>
+        <script src="./src/build-reservation-table.js"></script>
+        <script src="./src/app.js"></script>
     </body>
 </html>
