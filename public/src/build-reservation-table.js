@@ -1,118 +1,132 @@
-(async ()=>{
-  const reservation = await getReservation();
-  console.log(reservation);
-  if (reservation.length) {
-    const div = document.getElementById('reservation');
-    const loadingDiv = div.childNodes[1];
+class ReservationList {
+  reservation = [];
 
-    const tr = document.createElement('tr');
-    div.replaceChild(tr, loadingDiv); // <- order is important here!
-    reservation.map((reservation) => {
-      // building blocks
-      const th = document.createElement('th');
-      th.className = 'reservation-item';
-      const block = document.createElement('div');
-      block.className = 'reservation-item-block';
-
-      const checkboxSpan = document.createElement('span');
-      const checkbox = document.createElement('input');
-      checkbox.setAttribute('type', 'checkbox');
-      checkboxSpan.className = 'reservation-checkbox';
-      checkboxSpan.appendChild(checkbox);
+  constructor() {}
+ 
   
-      const nameSpan = document.createElement('span');
-      nameSpan.className = 'reservation-username';
-      nameSpan.innerText = reservation.username;
+    createReservationListParent = () => {
+      const tr = document.createElement('tr');
+      tr.id = 'Reservation-list';
+      tr.className = 'list-group list-group-flush checked-list-box';
+      return tr;
+    };
+  
+    _deleteEventHandler = (reservation_id) => async () => {
+      if (reservation_id) {
+        const res = await deleteReservation(reservation_id);
+  
+        if (res !== null) {
+          this.reservation = this.reservation.filter((reservation) => reservation.reservation_id !== reservation_id);
+          const reservation = document.getElementById(`reservation-${reservation_id}`);
+          reservation.remove();
+  
+          if (!this.reservation.length) {
+            const div = document.getElementById('reservation');
+            const loadingDiv = div.childNodes[1];
+            const errDiv = this.generateErrorMsg('Create some new reservation!');
+            div.replaceChild(errDiv, loadingDiv);
+          }
+        }
+      }
+    };
+  
+    /**
+     * Builds the list item.
+     * Uses bootstrap classes with some custom overrides.
+     *
+     * {@link https://getbootstrap.com/docs/4.4/components/list-group/}
+     * @example
+     * <li class="list-group-item">
+     *   <button class="btn btn-secondary" onclick="deleteTask(e, index)">X</button>
+     *   <span>Task name</span>
+     *   <span>pending</span>
+     *   <span>date create</span>
+     * </li>
+     */
+    buildReservationListRowItem = (reservation) => {
+      const listGroupItem = document.createElement('th');
+      listGroupItem.id = `reservation-${reservation.reservation_id}`; 
+      listGroupItem.className = 'list-group-item';
+  
+      const deleteBtn = document.createElement('button');
+      const deleteBtnTxt = document.createTextNode('X');
+      deleteBtn.className = 'btn btn-secondary';
+      deleteBtn.addEventListener('click', this._deleteEventHandler(reservation.reservation_id));
+      deleteBtn.appendChild(deleteBtnTxt);
+  
+      const reservationUserNameSpan = document.createElement('span');
+      const reservationUserName = document.createTextNode(reservation.username);
+      reservationUserNameSpan.appendChild(reservationUserName);
+
   
       const bikeSpan = document.createElement('span');
-      bikeSpan.className = 'reservation-bike_id';
-      bikeSpan.innerText = reservation.bike_id;
+      const bike= document.createTextNode(reservation.bike_id)
+      bikeSpan.appendChild(bike);
   
       const dateSpan = document.createElement('span');
-      dateSpan.className = 'reservation-date';
-      dateSpan.innerText = reservation.reservation_date;
+      const date = document.createTextNode(reservation.reservation_date);
+      dateSpan.appendChild(date);
 
       const startTimeSpan = document.createElement('span');
-      startTimeSpan.className = 'reservation_start_time';
-      startTimeSpan.innerText = reservation.reservation_date;
+      const startTime = document.createTextNode(reservation.reservation_start_time);
+      startTimeSpan.appendChild(startTime);
 
       const endTimeSpan = document.createElement('span');
-      endTimeSpan.className = 'reservation_end_time';
-      endTimeSpan.innerText = reservation.reservation_date;
+      const endTime= document.createTextNode(reservation.reservation_end_time);
+      endTimeSpan.appendChild(endTime);
   
-        // add list item
-      block.appendChild(checkboxSpan);
-      block.appendChild(nameSpan);
-      block.appendChild(bikeSpan);
-      block.appendChild(dateSpan);
-      block.appendChild(startTimeSpan);
-      block.appendChild(endTimeSpan);
+       
   
-      th.appendChild(block);
-      tr.appendChild(th);
+      // add list item's details
+      listGroupItem.append(deleteBtn);
+      listGroupItem.append(reservationUserNameSpan);
+      listGroupItem.append(bikeSpan);
+      listGroupItem.append(dateSpan);
+      listGroupItem.append(startTimeSpan);
+      listGroupItem.append(endTimeSpan);
+
+  
+      return listGroupItem;
+    };
+  
+    /**
+     * Assembles the list items then mounts them to a parent node.
+     * Uses bootstrap classes with some custom overrides.
+     */
+    buildReservationList = (mount, reservation) =>
+      reservation.map((reservation) => {
+        const listGroupRowItem = this.buildReservationListRowItem(reservation);
+  
+        // add entire list item
+        mount.append(listGroupRowItem);
       });
-    }
-  })();
-
-
-/*(async () => {
-    const reservation = await getReservation();
-    console.log(reservation);
   
-    if (reservation.length) {
+    generateErrorMsg = (msg) => {
+      const div = document.createElement('div');
+      const text = document.createTextNode(msg);
+      div.id = 'user-message';
+      div.className = 'center';
+      div.appendChild(text);
+      return div;
+    };
+  
+    generateReservation = async () => {
+      const res = await getReservation();
       const div = document.getElementById('reservation');
       const loadingDiv = div.childNodes[1];
   
-      const ul = document.createElement('ul');
+      if (res.length) {
+        this.reservation = res;
+        const reservationDiv = this.createReservationListParent();
+        this.buildReservationList(reservationDiv, res);
+        div.replaceChild(reservationDiv, loadingDiv);
+      } else {
+        const errDiv = this.generateErrorMsg(res.msg);
+        div.replaceChild(errDiv, loadingDiv);
+      }
+    };
+  }
   
-      // replace 'loading...' with list
-      div.replaceChild(ul, loadingDiv); // <- order is important here!
+  const inst = new ReservationList();
   
-      // create the list
-      reservation.map((reservation) => {
-        // building blocks
-        const li = document.createElement('li');
-        li.className = 'reservation-item';
-        const block = document.createElement('div');
-        block.className = 'reservation-item-block';
   
-        //   content
-        const checkboxSpan = document.createElement('span');
-        const checkbox = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox');
-        checkboxSpan.className = 'reservation-checkbox';
-        checkboxSpan.appendChild(checkbox);
-  
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'reservation-username';
-        nameSpan.innerText = reservation.username;
-  
-        const bikeSpan = document.createElement('span');
-        bikeSpan.className = 'reservation-bike_id';
-        bikeSpan.innerText = reservation.bike_id;
-  
-        const dateSpan = document.createElement('span');
-        dateSpan.className = 'reservation-date';
-        dateSpan.innerText = reservation.reservation_date;
-
-        const startTimeSpan = document.createElement('span');
-        startTimeSpan.className = 'reservation_start_time';
-        startTimeSpan.innerText = reservation.reservation_date;
-
-        const endTimeSpan = document.createElement('span');
-        endTimeSpan.className = 'reservation_end_time';
-        endTimeSpan.innerText = reservation.reservation_date;
-  
-        // add list item
-        block.appendChild(checkboxSpan);
-        block.appendChild(usernameSpan);
-        block.appendChild(bikeSpan);
-        block.appendChild(dateSpan);
-        block.appendChild(startTimeSpan);
-        block.appendChild(endTimeSpan);
-  
-        li.appendChild(block);
-        ul.appendChild(li);
-      });
-    }
-  })();*/

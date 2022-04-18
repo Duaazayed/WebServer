@@ -3,7 +3,9 @@ const doLogin = async (e) => {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
   
-    const res = await login({ username, password });
+    const res = await login({ username, password }).catch((err) => {
+      alert('Failed to login. Please try again later.');
+    });
   
     const { auth, access_token, refresh_token } = res;
   
@@ -20,15 +22,16 @@ const doLogin = async (e) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
   
-    register({
+    const res = await register({
       username,
       email,
       password,
-    }).then((res) => {
-      window.location.href = 'home.html';
     });
-  };
   
+    if (res) {
+      window.location.href = '/';
+    }
+  };
   const doLogout = (e) => {
     e.preventDefault();
     logout();
