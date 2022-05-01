@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/flexbox.css" />
+    
+    <title>Settings</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+      <ul>
+        <li> <a href="/home.html" class="tabColor">Home</a></li>
+        <li> <a href="#" class="tabColor">About</a></li>
+        <li> <a href="/settings/settings.html" class="tabColor">Settings</a></li>
+        <li> <a href="/index.html" class="tabColor" onclick="doLogout(event)">Logout</a></li>
+    </ul>
+  </nav>
+    
+    
+    </header>
+
+    <h2>Settings</h2>
+         
+          <form  class= "settings" novalidate>
+            <div>
+              <input
+                id="formInputUsernameReg"
+                type="text"
+                placeholder="Enter Your Username"
+              />
+            </div>
+            <div>
+              <input id="formInputEmailReg" type="text"  placeholder="Enter Your Email"/>
+            </div>
+            <div>
+              <input
+                id="formInputCurrentPasswordReg"
+                type="password"
+                placeholder="Enter Your Current Password"
+              />
+            </div>
+            <div>
+              <input
+                id="formInputNewPasswordReg"
+                type="password"
+                placeholder="Enter Your New Password"
+              />
+            </div>
+            <div>
+              <button onclick="saveChanges(event)">
+                Save Changes
+              </button>
+            </div>
+          </form>
+      
+
+    
+    <script src="../src/api.config.js"></script>
+    <script src="../src/simple-storage.js"></script>
+    <script src="../src/service-helpers.js"></script>
+    <script src="../src/auth.service.js"></script>
+    <script src="../src/user-api-service.js"></script>
+    <script src="../src/auth.js"></script>
+    <script src="../src/route-guard.js"></script>
+    <script src="./settings.js"></script>
+  </body>
+</html>
